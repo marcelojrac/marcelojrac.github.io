@@ -1,0 +1,8 @@
+[
+	{
+		"method": ["GET"],
+		"origin": ["https://www.lnec.pt", "http://localhost:*", "https://localhost:*"],
+		"responseHeader": ["Content-Type"],
+		"maxAgeSeconds": 3600
+	}
+]

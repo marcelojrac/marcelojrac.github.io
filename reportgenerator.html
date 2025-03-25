@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/reportgeneratorstyles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <img src="lnec_logo.png" alt="LNEC Logo">
+            <button class="instruction-button" onclick="openModal(event)" style="float: right; margin-left: auto; margin-top: 10px;">Instructions</button>
+            <h1>Report Generator</h1>
+        </div>
+
+        <!-- Report Metadata -->
+        <form id="report-form">
+            <label for="project-name">Project Name:</label>
+            <input type="text" id="project-name" name="project-name" placeholder="Enter project name">
+
+            <label for="department">Department:</label>
+            <input type="text" id="department" name="department" placeholder="Enter department name">
+
+            <label for="unit">Unit:</label>
+            <input type="text" id="unit" name="unit" placeholder="Enter unit name">
+
+            <label for="authors">Authors:</label>
+            <input type="text" id="authors" name="authors" placeholder="Enter authors">
+
+            <!-- Sections -->
+            <div class="section-container" id="sections">
+                <h3>Report Sections</h3>
+                <div class="section" data-id="1">
+                    <label for="section-title-1">Section Title:</label>
+                    <input type="text" id="section-title-1" name="section-title-1" placeholder="Enter section title">
+
+                    <label for="section-description-1">Description:</label>
+                    <textarea id="section-description-1" name="section-description-1" rows="3" placeholder="Enter section description"></textarea>
+                    
+                    <label for="vtk-url-1">
+                        VTKJS URL (Optional):
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                How to upload and get your VTKJS URL: 
+                                1. Go to <a href="https://github.com" target="_blank" style="color: #66c0ff; text-decoration: underline;">GitHub</a> and log in. 
+                                2. Create or select a repository. 
+                                3. Click 'Add file' → 'Upload files'. 
+                                4. Upload your .vtkjs file and commit. 
+                                5. Open the file and click 'Raw'. 
+                                6. Copy the URL (should start with 'https://raw.githubusercontent.com').
+                                Example: 
+                                Original: https://github.com/username/repository/blob/main/example.vtkjs
+                                Raw: https://raw.githubusercontent.com/username/repository/main/example.vtkjs
+                                7. Paste it here.
+                            </span>
+                        </span>
+                    </label>
+                    
+                    <input type="text" id="vtk-url-1" name="vtk-url-1" placeholder="Enter VTKJS file URL">
+
+                    <label for="file-upload-1">Upload File (Image, PDF):</label>
+                    <input type="file" id="file-upload-1" name="file-upload-1">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="button" onclick="addSection()" class="circle-button">+</button>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+             <!--   <button class="instruction-button" onclick="openModal(event)" style="float: left; margin-right: auto;">Instructions</button> -->
+                <button type="button" onclick="generateReport()">Download Report</button>
+                <button type="button" onclick="downloadLogo()" style="margin-left: 10px;">Download LNEC logo</button>
+                
+            </div>
+
+            
+
+            <!-- Modal for Instructions -->
+            <div id="instruction-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2>How to Use This Report Generator</h2>
+                    <ol>
+                        <li>Fill in the project details (name, department, unit, authors).</li>
+                        <li>Add sections using the <strong>+</strong> button and provide the section title, description, and optional VTKJS URL.</li>
+                        <li>To upload VTKJS files:
+                            <ul>
+                                <li>Go to <a href="https://github.com" target="_blank">GitHub</a>.</li>
+                                <li>Upload your .vtkjs file and click 'Raw'.</li>
+                                <li>Copy the URL and paste it in the VTKJS URL field.</li>
+                            </ul>
+                        </li>
+                        <li>Upload any images or PDFs related to your report sections.</li>
+                        <li>Click 'Download Report' to generate and save the report as an HTML file.</li>
+                    </ol>
+                    <p>Ensure all uploaded files are in the same folder as the generated HTML file for proper linking.</p>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    <script>
+
+        let sectionCount = 1;
+
+        function addSection() {
+            sectionCount++;
+            const sectionsContainer = document.getElementById('sections');
+            const section = document.createElement('div');
+            section.classList.add('section');
+            section.setAttribute('data-id', sectionCount);
+
+            section.innerHTML = `
+                <label for="section-title-${sectionCount}">Section Title:</label>
+                <input type="text" id="section-title-${sectionCount}" name="section-title-${sectionCount}" placeholder="Enter section title">
+
+                <label for="section-description-${sectionCount}">Description:</label>
+                <textarea id="section-description-${sectionCount}" name="section-description-${sectionCount}" rows="3" placeholder="Enter section description"></textarea>
+
+                <label for="vtk-url-1">
+                        VTKJS URL (Optional):
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                How to upload and get your VTKJS URL: 
+                                1. Go to <a href="https://github.com" target="_blank" style="color: #66c0ff; text-decoration: underline;">GitHub</a> and log in. 
+                                2. Create or select a repository. 
+                                3. Click 'Add file' → 'Upload files'. 
+                                4. Upload your .vtkjs file and commit. 
+                                5. Open the file and click 'Raw'. 
+                                6. Copy the URL (should start with 'https://raw.githubusercontent.com').
+                                Example: 
+                                Original: https://github.com/username/repository/blob/main/example.vtkjs
+                                Raw: https://raw.githubusercontent.com/username/repository/main/example.vtkjs
+                                7. Paste it here.
+                            </span>
+                        </span>
+                    </label>
+                <input type="text" id="vtk-url-${sectionCount}" name="vtk-url-${sectionCount}" placeholder="Enter VTKJS file URL">
+
+                <label for="file-upload-${sectionCount}">Upload File (Image, PDF):</label>
+                <input type="file" id="file-upload-${sectionCount}" name="file-upload-${sectionCount}">
+            `;
+
+            sectionsContainer.appendChild(section);
+        }
+
+        function downloadLogo() {
+            const link = document.createElement('a');
+            link.href = 'lnec_logo.png'; // Ensure the file path is correct
+            link.download = 'logo_lnec.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function generateReport() {
+    const formData = new FormData(document.getElementById('report-form'));
+    let reportContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+            <title>${formData.get('project-name')}</title>
+            <style>
+                /* Global Styles */
+                
+                body {
+                    font-family: 'Roboto', sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                /* Header and Section Styles */
+                .header, .section {
+                    background-color: #ffffff;
+                    padding: 20px;
+                    margin: 20px auto;
+                    max-width: 900px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    border-radius: 8px;
+                    overflow: hidden; /* Ensures no overflow content is displayed outside the box */
+                    word-wrap: break-word; /* Ensures long words break to the next line */
+                    overflow-wrap: break-word; /* Ensures text breaks within a word if necessary */
+                }
+
+                /* Header Image Styling */
+                .header img {
+                    margin-right: auto; 
+                    max-height: 50px; 
+                    width: auto; 
+                    margin-bottom: 10px; 
+                    display: block; 
+                }
+
+                /* Header Text Styling */
+                .header h1 {
+                    text-align: center;
+                    font-size: 24px;
+                    margin: 0;
+                }
+
+                /* Section Title Styling */
+                h2 {
+                    font-size: 20px;
+                    font-weight: 700;
+                    text-align: center;
+                    margin-bottom: 10px;
+                }
+
+                /* Paragraph Styling */
+                p {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                    overflow-wrap: break-word; /* Ensures long paragraphs wrap properly */
+                    word-wrap: break-word; /* Support for older browsers */
+                    white-space: pre-wrap; /* Preserves spaces and wraps lines */
+                }
+
+                    /* Media Embeds */
+                    iframe, img {
+                        max-width: 100%; /* Prevent overflow beyond the section width */
+                        margin-top: 20px;
+                        border: none;
+                        display: block;
+                        object-fit: contain; /* Maintain aspect ratio without distortion */
+                    }
+
+                    /* PDF-specific Styling */
+                    iframe[src*=".pdf"] {
+                        width: 100%; /* Take full width of the section */
+                        height: 700px; /* Provide ample height for readability */
+                        border: 1px solid #ccc; /* Optional border for clarity */
+                    }
+
+            </style>
+        </head>
+        
+        <body>
+            <div class="header">
+                <img src="logo_lnec.png" alt="LNEC Logo">
+                <h1>${formData.get('project-name')}</h1>
+                <hr>
+                <p><strong>Department:</strong> ${formData.get('department')}</p>
+                <p><strong>Unit:</strong> ${formData.get('unit')}</p>
+                <p><strong>Authors:</strong> ${formData.get('authors')}</p>
+            </div>
+    `;
+
+    for (let i = 1; i <= sectionCount; i++) {
+        let title = formData.get(`section-title-${i}`) || 'Untitled Section';
+        let description = formData.get(`section-description-${i}`) || '';
+        let vtkUrl = formData.get(`vtk-url-${i}`);
+        let file = document.getElementById(`file-upload-${i}`).files[0];
+        let fileName = file ? file.name : null;
+
+        reportContent += `
+            <div class="section">
+                <h2>${title}</h2>
+                <p>${description}</p>
+        `;
+
+        if (vtkUrl) {
+            reportContent += `
+                <iframe src="https://glancebylnec.github.io/glancewebapp/index?name=${fileName || 'file.vtkjs'}&url=${vtkUrl}" allowfullscreen style="width: 100%; height: 600px; border: none;"></iframe>
+            `;
+        } else if (file) {
+            if (fileName.endsWith('.pdf')) {
+                reportContent += `<iframe src="${fileName}"></iframe>`;
+            } else {
+                reportContent += `<img src="${fileName}" alt="Uploaded Image">`;
+            }
+        }
+
+        reportContent += `</div>`;
+    }
+
+    reportContent += `
+        </body>
+        </html>
+    `;
+
+    const blob = new Blob([reportContent], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${formData.get('project-name')}.html`;
+    a.click();
+}
+
+
+
+// Alert users once when they upload a file
+let fileUploadAlertShown = false;
+
+document.addEventListener('change', function (event) {
+    if (event.target && event.target.type === 'file') {
+        const fileInput = event.target;
+        if (fileInput.files.length > 0 && !fileUploadAlertShown) {
+            alert('Make sure the uploaded file is in the same folder as this HTML file for proper linking.');
+            fileUploadAlertShown = true; // Set the flag to true after showing the alert
+        }
+    }
+});
+
+function openModal(event) {
+    event.preventDefault(); // Prevent the default action
+    document.getElementById('instruction-modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('instruction-modal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('instruction-modal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+};
+    </script>
+</body>
+</html>
